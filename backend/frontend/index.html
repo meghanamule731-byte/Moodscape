@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Moodscape</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+
+            background:
+                radial-gradient(circle at 10% 20%, #3b3b68 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, #593b68 0%, transparent 30%),
+                linear-gradient(135deg, #11111f, #1c1830, #11111f);
+
+            color: white;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 40px;
+
+            transition: background 0.6s ease;
+
+            overflow-x: hidden;
+        }
+
+
+        /* Decorative circles */
+
+        .circle {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(2px);
+            opacity: 0.25;
+            z-index: -1;
+        }
+
+        .circle1 {
+            width: 180px;
+            height: 180px;
+            background: #ff8fab;
+            top: 5%;
+            left: 5%;
+        }
+
+        .circle2 {
+            width: 220px;
+            height: 220px;
+            background: #8ec5ff;
+            bottom: 5%;
+            right: 5%;
+        }
+
+
+        /* Main card */
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+
+            padding: 45px;
+
+            background: rgba(255, 255, 255, 0.08);
+
+            border: 1px solid rgba(255, 255, 255, 0.15);
+
+            border-radius: 30px;
+
+            backdrop-filter: blur(20px);
+
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.4);
+
+            text-align: center;
+        }
+
+
+        /* Heading */
+
+        .logo {
+            font-size: 18px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #c9c3ff;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 55px;
+            margin-bottom: 15px;
+
+            background: linear-gradient(
+                90deg,
+                #ffffff,
+                #d8c9ff,
+                #ffbfd5
+            );
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #c7c5d2;
+            font-size: 19px;
+            margin-bottom: 40px;
+        }
+
+
+        /* Mood grid */
+
+        .mood-container {
+            display: grid;
+
+            grid-template-columns: repeat(4, 1fr);
+
+            gap: 18px;
+
+            margin-top: 30px
+        }
+
+        .mood {
+            border: 1px solid rgba(255, 255, 255, 0.12);
+
+            border-radius: 22px;
+
+            padding: 25px 10px;
+
+            background: rgba(255, 255, 255, 0.07);
+
+            color: white;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+
+            font-size: 17px;
+        }
+
+        .mood:hover {
+            transform: translateY(-8px);
+
+            background: rgba(255, 255, 255, 0.15);
+
+            border-color: rgba(255, 255, 255, 0.3);
+
+            box-shadow:
+                0 15px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .emoji {
+            display: block;
+
+            font-size: 42px;
+
+            margin-bottom: 12px;
+
+            transition: 0.3s;
+        }
+
+        .mood:hover .emoji {
+            transform: scale(1.2);
+        }
+
+
+        /* Result */
+
+        #result {
+            margin-top: 35px;
+
+            padding: 25px;
+
+            min-height: 120px;
+
+            border-radius: 22px;
+
+            background: rgba(0, 0, 0, 0.18);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #message {
+            font-size: 22px;
+            font-weight: bold;
+
+            color: white;
+        }
+
+        #suggestion {
+            margin-top: 15px;
+
+            font-size: 17px;
+
+            color: #c9c6d4;
+
+            line-height: 1.6;
+        }
+
+
+        /* Mood Journal */
+
+        .journal {
+            margin-top: 30px;
+
+            padding: 30px;
+
+            border-radius: 22px;
+
+            background: rgba(255, 255, 255, 0.08);
+
+            border: 1px solid rgba(255, 255, 255, 0.12);
+
+            backdrop-filter: blur(15px);
+        }
+
+        #activityList {
+    margin-top: 20px;
+}
+
+#activityList p {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 15px;
+    padding: 14px 18px;
+    margin: 10px 0;
+    text-align: left;
+    transition: 0.3s;
+}
+
+#activityList p:hover {
+    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.14);
+}
+
+        .journal h2 {
+            font-size: 25px;
+
+            margin-bottom: 8px;
+        }
+
+        .journal p {
+            color: #c9c6d4;
+
+            margin-bottom: 20px;
+        }
+
+        #journalText {
+            width: 100%;
+
+            min-height: 130px;
+
+            padding: 18px;
+
+            border-radius: 16px;
+
+            border: 1px solid rgba(255, 255, 255, 0.15);
+
+            background: rgba(0, 0, 0, 0.15);
+
+            color: white;
+
+            font-size: 16px;
+
+            resize: vertical;
+
+            outline: none;
+        }
+
+        #journalText::placeholder {
+            color: #aaa6b8;
+        }
+
+        .save-btn {
+            margin-top: 15px;
+
+            padding: 13px 25px;
+
+            border: none;
+
+            border-radius: 15px;
+
+            background: rgba(255, 255, 255, 0.85);
+
+            color: #333;
+
+            font-size: 15px;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-3px);
+
+            background: white;
+
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        #journalStatus {
+            margin-top: 12px;
+
+            font-size: 14px;
+
+            color: #c9c6d4;
+        }
+
+        /* Journal History */
+
+#journalHistory {
+    text-align: left;
+    margin-top: 20px;
+}
+
+.history-entry {
+    padding: 18px;
+    margin-bottom: 15px;
+
+    background: rgba(0, 0, 0, 0.15);
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    border-radius: 16px;
+
+    transition: 0.3s;
+}
+
+.history-entry:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.history-mood {
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.history-text {
+    color: #d0cdd9;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.history-date {
+    font-size: 12px;
+    color: #9691a5;
+} 
+ 
+/* Music Suggestions */
+
+#musicSuggestions {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.music-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 15px 18px;
+
+    background: rgba(0, 0, 0, 0.15);
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    border-radius: 16px;
+
+    transition: 0.3s;
+}
+
+.music-card:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.music-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.music-btn {
+    padding: 9px 16px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.85);
+
+    color: #333;
+
+    cursor: pointer;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    transition: 0.3s;
+}
+
+.music-btn:hover {
+    background: white;
+    transform: scale(1.05);
+}
+
+/* Mood Dashboard */
+
+#moodStats {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.stat-row {
+    margin-bottom: 18px;
+}
+
+.stat-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 7px;
+    font-size: 15px;
+}
+
+.stat-bar {
+    width: 100%;
+    height: 10px;
+
+    background: rgba(255, 255, 255, 0.1);
+
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.stat-fill {
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        #c9c3ff,
+        #ffbfd5
+    );
+
+    border-radius: 10px;
+
+    transition: width 0.6s ease;
+}
+
+/* Mood Calendar */
+
+#moodCalendar {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.calendar-day {
+    min-height: 55px;
+    padding: 8px 4px;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 13px;
+
+    transition: 0.3s;
+}
+
+.calendar-day:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.calendar-header {
+    font-size: 13px;
+    color: #aaa6b8;
+    font-weight: bold;
+}
+
+.calendar-mood {
+    font-size: 20px;
+    margin-top: 5px;
+}
+
+/* Mood Streak */
+
+#moodStreak {
+    margin: 20px 0;
+    padding: 18px;
+
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    font-size: 20px;
+    font-weight: bold;
+
+    color: #ffd6e7;
+
+    text-align: center;
+
+    transition: 0.3s;
+}
+
+#moodStreak:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* Breathing Exercise */
+
+#breathingExercise {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#breathingCircle {
+    width: 140px;
+    height: 140px;
+
+    margin: 20px auto;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.12);
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 17px;
+
+    transition: transform 4s ease-in-out;
+}
+
+#breathingText {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    color: #d0cdd9;
+    font-size: 16px;
+}
+
+/* Daily Affirmation */
+
+#affirmationText {
+    margin-top: 20px;
+
+    padding: 25px;
+
+    border-radius: 18px;
+
+    background: rgba(0, 0, 0, 0.15);
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    color: #e2dff0;
+
+    font-size: 18px;
+
+    line-height: 1.6;
+
+    font-style: italic;
+}
+
+/* AI Mood Analysis */
+
+#aiResult {
+    margin-top: 20px;
+    padding: 20px;
+
+    border-radius: 18px;
+
+    background: rgba(0, 0, 0, 0.15);
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    color: #d0cdd9;
+
+    font-size: 16px;
+
+    line-height: 1.6;
+
+    text-align: left;
+
+    min-height: 20px;
+}
+
+        /* Footer */
+
+        .footer {
+            margin-top: 30px;
+
+            font-size: 13px;
+
+            color: #777487;
+
+            letter-spacing: 1px;
+        }
+
+
+        /* Responsive */
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 40px;
+            }
+
+            .mood-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        #themeToggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+}
+
+#themeToggle:hover {
+    transform: scale(1.05);
+}
+
+.light-mode {
+    background: #f4f1f8 !important;
+    color: #333 !important;
+}
+
+.light-mode h1,
+.light-mode h2,
+.light-mode h3,
+.light-mode p,
+.light-mode .logo,
+.light-mode .mood-name,
+.light-mode .mood-label {
+    color: #333 !important;
+}
+
+.light-mode .journal {
+    background: rgba(255, 255, 255, 0.75);
+    color: #333;
+}
+
+.light-mode .mood {
+    color: #333 !important;
+    opacity: 1 !important;
+}
+.light-mode #result {
+    background: rgba(255, 255, 255, 0.75);
+    color: #333;
+}
+
+.light-mode #affirmationText,
+.light-mode #aiResult,
+.light-mode .history-entry,
+.light-mode .music-card {
+    color: #333;
+    background: rgba(255, 255, 255, 0.65);
+}
+
+.light-mode #themeToggle {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    z-index:1000;
+}
+
+
+.light-mode h1 {
+    background: none !important;
+    -webkit-text-fill-color: #333 !important;
+    color: #333 !important;
+}
+
+
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <button id="themeToggle" onclick="toggleTheme()">
+    ☀️ Light Mode
+</button>
+
+    <div class="circle circle1"></div>
+
+    <div class="circle circle2"></div>
+
+
+    <div class="container">
+
+
+
+        <div class="logo">
+            ✦ YOUR PERSONAL MOOD SPACE
+        </div>
+         
+
+        <h1>
+            Moodscape
+        </h1>
+
+
+        <p class="subtitle">
+            Pause. Feel. Understand yourself.
+        </p>
+        <!-- Login / Signup -->
+<div class="journal">
+    <h2>🔐 Account</h2>
+    <p>Login or create an account to save your personal Moodscape data.</p>
+
+    <input type="text" id="username" placeholder="Username">
+
+    <input type="password" id="password" placeholder="Password">
+
+    <div>
+        <button class="save-btn" onclick="signupUser()">
+            ✨ Sign Up
+        </button>
+
+        <button class="save-btn" onclick="loginUser()">
+            🔑 Login
+        </button>
+    </div>
+
+    <p id="authStatus"></p>
+</div>
+
+        <!-- MOODS -->
+
+        <div class="mood-container">
+
+
+            <button class="mood" onclick="showMood('Happy')">
+
+                <span class="emoji">😊</span>
+
+                Happy
+
+            </button>
+
+
+            <button class="mood" onclick="showMood('Sad')">
+
+                <span class="emoji">😢</span>
+
+                Sad
+
+            </button>
+
+
+            <button class="mood" onclick="showMood('Calm')">
+
+                <span class="emoji">😌</span>
+
+                Calm
+
+            </button>
+
+
+            <button class="mood" onclick="showMood('Angry')">
+
+                <span class="emoji">😡</span>
+
+                Angry
+
+            </button>
+
+
+            <button class="mood" onclick="showMood('Anxious')">
+
+                <span class="emoji">😰</span>
+
+                Anxious
+
+            </button>
+
+
+            <button class="mood" onclick="showMood('Loved')">
+
+                <span class="emoji">🥰</span>
+
+                Loved
+
+            </button>
+
+
+            <button class="mood" onclick="showMood('Tired')">
+
+                <span class="emoji">😴</span>
+
+                Tired
+
+            </button>
+
+
+            <button class="mood" onclick="showMood('Excited')">
+
+                <span class="emoji">🤩</span>
+
+                Excited
+
+            </button>
+
+
+        </div>
+
+
+        <!-- RESULT -->
+
+        <div id="result">
+
+            <p id="message">
+                Choose how you feel ✨
+            </p>
+
+            <p id="suggestion">
+                Your personal space is waiting.
+            </p>
+
+        </div>
+
+
+        <!-- MOOD JOURNAL -->
+
+        <div class="journal">
+
+            <h2>
+                📖 Mood Journal
+            </h2>
+
+            <p>
+                Want to write something about how you feel?
+            </p>
+
+
+            <textarea
+                id="journalText"
+                placeholder="Write your thoughts here...">
+            </textarea>
+
+
+            <br>
+
+
+            <button
+                class="save-btn"
+                onclick="saveJournal()">
+
+                💾 Save Journal
+
+            </button>
+
+
+            <p id="journalStatus"></p>
+
+        </div>
+         
+                <!-- JOURNAL HISTORY -->
+
+        <div class="journal">
+
+            <h2>
+                📚 Journal History
+            </h2>
+
+            <p>
+                Your previous thoughts and moods
+            </p>
+
+            <div id="journalHistory">
+                Loading journal history...
+            </div>
+
+        </div>
+
+        <!-- MUSIC SUGGESTIONS -->
+
+<div class="journal">
+
+    <h2>
+        🎵 Music for Your Mood
+    </h2>
+
+    <p id="musicDescription">
+        Select a mood to get music suggestions.
+    </p>
+
+    <div id="musicSuggestions">
+    </div>
+
+</div>
+
+<!-- MOOD DASHBOARD -->
+
+<div class="journal">
+
+    <h2>
+        📊 Mood Dashboard
+    </h2>
+
+    <p>
+        Your mood overview
+    </p>
+
+    <div id="moodStreak">
+    🔥 0 Day Streak
+</div>
+
+    <div id="moodStats">
+        Loading mood statistics...
+    </div>
+
+</div>
+
+<!-- BREATHING EXERCISE -->
+
+<div class="journal">
+
+    <h2>
+        🧘 Breathing Exercise
+    </h2>
+
+    <p>
+        Take a moment to slow down and breathe.
+    </p>
+
+    <div id="breathingExercise">
+
+        <div id="breathingCircle">
+            Breathe
+        </div>
+
+        <p id="breathingText">
+            Ready?
+        </p>
+
+        <button
+            class="save-btn"
+            onclick="startBreathing()">
+
+            ▶ Start Breathing
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- DAILY AFFIRMATION -->
+
+<div class="journal">
+
+    <h2>
+        💬 Daily Affirmation
+    </h2>
+
+    <p id="affirmationText">
+        Choose a mood to receive a personal affirmation.
+    </p>
+
+</div>
+
+
+
+<!-- Mood-Based Activities -->
+<div class="journal">
+    <h2>🎯 Mood-Based Activities</h2>
+    <p>Try something that matches your current mood.</p>
+
+    <div id="activityList">
+        <p>Select a mood above to get activity suggestions. 🌸</p>
+    </div>
+</div>
+
+<!-- AI MOOD ANALYSIS -->
+
+<div class="journal">
+
+    <h2>
+        🤖 AI Mood Analysis
+    </h2>
+
+    <p>
+        Understand the emotions behind your journal.
+    </p>
+
+    <button
+        class="save-btn"
+        onclick="analyzeMood()">
+
+        ✨ Analyze My Journal
+
+    </button>
+
+    <div id="aiResult">
+    </div>
+
+</div>
+
+<!-- MOOD CALENDAR -->
+
+<div class="journal">
+
+    <h2>
+        📅 Mood Calendar
+    </h2>
+
+    <p>
+        See how your mood changes over time
+    </p>
+
+    <div id="moodCalendar">
+        Loading calendar...
+    </div>
+
+</div>
+
+        <!-- FOOTER -->
+
+        <div class="footer">
+
+            Take a moment for yourself • Moodscape
+
+        </div>
+
+
+    </div>
+
+
+   <script>
+
+    /* =========================
+       MOOD FUNCTION
+    ========================= */
+
+    var currentMood = "";
+
+    var affirmationData = {
+
+    Happy: "Hold on to this happiness and enjoy the moment. ✨",
+
+    Sad: "It's okay to have difficult days. Be gentle with yourself. 💙",
+
+    Calm: "You are allowed to slow down and simply enjoy this peaceful moment. 🌿",
+
+    Angry: "You don't have to react immediately. Take a breath and give yourself time. 🌸",
+
+    Anxious: "You don't have to figure everything out right now. Take it one step at a time. 🤍",
+
+    Loved: "You are worthy of love, kindness, and beautiful moments. ❤️",
+
+    Tired: "Rest is not a weakness. Give yourself permission to recharge. 😴",
+
+    Excited: "Use your positive energy to create something meaningful today! ✨"
+
+};
+
+var activityData = {
+    Happy: [
+        "🎵 Listen to your favorite upbeat song",
+        "📸 Take some photos or capture a happy moment",
+        "💬 Talk to someone you enjoy spending time with",
+        "📝 Write down 3 things you are grateful for"
+    ],
+
+    Sad: [
+        "🌿 Take a short peaceful walk",
+        "📝 Write your feelings in your journal",
+        "🎵 Listen to calming music",
+        "💬 Talk to someone you trust"
+    ],
+
+    Calm: [
+        "🧘 Try a short meditation",
+        "📖 Read a few pages of a book",
+        "🌿 Spend some quiet time in nature",
+        "☕ Enjoy a relaxing drink"
+    ],
+
+    Angry: [
+        "🌬️ Take 5 slow deep breaths",
+        "🚶 Go for a short walk",
+        "📝 Write down what is bothering you",
+        "🎵 Listen to music that helps you relax"
+    ],
+
+    Anxious: [
+        "🌬️ Practice slow breathing",
+        "📝 Write down your worries",
+        "🧘 Try a short meditation",
+        "📵 Take a break from your phone"
+    ],
+
+    Loved: [
+        "💌 Send a kind message to someone",
+        "❤️ Spend time with someone you love",
+        "📝 Write about a special memory",
+        "🎵 Listen to your favorite love song"
+    ],
+
+    Tired: [
+        "💧 Drink some water",
+        "😴 Take a short rest",
+        "🌿 Stretch your body gently",
+        "📵 Take a break from screens"
+    ],
+
+    Excited: [
+        "🎵 Play your favorite energetic song",
+        "🏃 Do a fun physical activity",
+        "📸 Capture this exciting moment",
+        "🎯 Work on something you are passionate about"
+    ]
+};
+
+    var musicData = {
+
+    Happy: [
+        "Happy Vibes",
+        "Feel Good Songs",
+        "Uplifting Music"
+    ],
+
+    Sad: [
+        "Emotional Vibes",
+        "Healing Songs",
+        "Calm & Slow Music"
+    ],
+
+    Calm: [
+        "Peaceful Music",
+        "Lo-Fi Chill",
+        "Relaxing Instrumentals"
+    ],
+
+    Angry: [
+        "Powerful Music",
+        "Energy Boost",
+        "Rock & Motivation"
+    ],
+
+    Anxious: [
+        "Relaxing Music",
+        "Deep Breathing Sounds",
+        "Peaceful Instrumentals"
+    ],
+
+    Loved: [
+        "Romantic Vibes",
+        "Love Songs",
+        "Soft & Sweet Music"
+    ],
+
+    Tired: [
+        "Sleepy Vibes",
+        "Soft Piano",
+        "Night Relaxation"
+    ],
+
+    Excited: [
+        "Party Vibes",
+        "High Energy Music",
+        "Feel Good Beats"
+    ]
+
+};
+
+function showMusic(mood) {
+
+    var musicBox = document.getElementById("musicSuggestions");
+    var description = document.getElementById("musicDescription");
+
+    description.innerHTML = "Music suggestions for your " + mood + " mood 🎧";
+
+    musicBox.innerHTML = "";
+
+    musicData[mood].forEach(function(song) {
+
+        musicBox.innerHTML += `
+            <div class="music-card">
+
+                <div class="music-name">
+                    🎵 ${song}
+                </div>
+
+                <a
+                    class="music-btn"
+                    href="https://www.youtube.com/results?search_query=${encodeURIComponent(song)}"
+                    target="_blank">
+
+                    ▶ Listen
+
+                </a>
+
+            </div>
+        `;
+
+    });
+}
+
+    function showMood(mood) {
+
+        currentMood = mood;
+
+        var activityList = document.getElementById("activityList");
+
+activityList.innerHTML = "";
+
+activityData[mood].forEach(function(activity) {
+    var p = document.createElement("p");
+    p.innerHTML = activity;
+    activityList.appendChild(p);
+});
+        showMusic(mood);
+        document.getElementById("affirmationText").innerHTML =
+    affirmationData[mood];
+
+        /* Change background according to mood */
+
+        if (mood == "Happy") {
+
+            document.body.style.background =
+                "linear-gradient(135deg, #302b63, #f8cdda)";
+
+        }
+
+        else if (mood == "Sad") {
+
+            document.body.style.background =
+                "linear-gradient(135deg, #141e30, #243b55)";
+
+        }
+
+        else if (mood == "Calm") {
+
+            document.body.style.background =
+                "linear-gradient(135deg, #134e5e, #71b280)";
+
+        }
+
+        else if (mood == "Angry") {
+
+            document.body.style.background =
+                "linear-gradient(135deg, #42275a, #734b6d)";
+
+        }
+
+        else if (mood == "Anxious") {
+
+            document.body.style.background =
+                "linear-gradient(135deg, #232526, #414345)";
+
+        }
+
+        else if (mood == "Loved") {
+
+            document.body.style.background =
+                "linear-gradient(135deg, #42275a, #f64f59)";
+
+        }
+
+        else if (mood == "Tired") {
+
+            document.body.style.background =
+                "linear-gradient(135deg, #1f1c2c, #928dab)";
+
+        }
+
+        else if (mood == "Excited") {
+
+            document.body.style.background =
+                "linear-gradient(135deg, #4b134f, #c94b4b)";
+
+        }
+
+
+        /* Send mood to backend */
+
+        fetch("http://localhost:5000/mood", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                mood: mood
+            })
+
+        })
+
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error("Server error");
+            }
+
+            return response.json();
+
+        })
+
+        .then(data => {
+
+            document.getElementById("message").innerHTML =
+                data.message;
+
+            document.getElementById("suggestion").innerHTML =
+                data.suggestion;
+
+        })
+
+        .catch(error => {
+
+            document.getElementById("message").innerHTML =
+                "Your mood is: " + mood;
+
+            document.getElementById("suggestion").innerHTML =
+                "Take a moment for yourself ✨";
+
+            console.log(error);
+
+        });
+
+    }
+
+
+    /* =========================
+       JOURNAL FUNCTION
+    ========================= */
+
+    function saveJournal() {
+
+    var journal = document.getElementById("journalText").value;
+    var message = document.getElementById("journalStatus");
+
+    console.log("Save button clicked");
+    console.log("Mood:", currentMood);
+    console.log("Journal:", journal);
+
+    if (journal.trim() == "") {
+        message.innerHTML = "Please write something first ✍️";
+        return;
+    }
+
+    fetch("http://localhost:5000/journal", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+    username: localStorage.getItem("moodscapeUser"),
+    mood: currentMood,
+    journal: journal
+})
+
+    })
+    .then(function(response) {
+
+        console.log("Response status:", response.status);
+
+        if (!response.ok) {
+            throw new Error("Server returned " + response.status);
+        }
+
+        return response.json();
+
+    })
+    .then(function(data) {
+
+        console.log("Server response:", data);
+
+        message.innerHTML = data.message;
+
+        document.getElementById("journalText").value = "";
+
+    })
+    .catch(function(error) {
+
+        console.error("JOURNAL ERROR:", error);
+
+        message.innerHTML = "Could not save journal ❌";
+
+    });
+}
+
+// Load Journal History
+
+function loadJournalHistory() {
+
+    fetch("http://localhost:5000/journal?username=" + localStorage.getItem("moodscapeUser"))
+
+        .then(function(response) {
+            return response.json();
+        })
+
+        .then(function(entries) {
+
+            var history = document.getElementById("journalHistory");
+
+            if (entries.length == 0) {
+                history.innerHTML = "No journal entries yet ✍️";
+                return;
+            }
+
+            history.innerHTML = "";
+
+            entries.reverse().forEach(function(entry) {
+
+                var date = new Date(entry.date);
+
+                history.innerHTML += `
+                    <div class="history-entry">
+
+                        <div class="history-mood">
+                            ${entry.mood || "No mood"} 💭
+                        </div>
+
+                        <div class="history-text">
+                            ${entry.journal}
+                        </div>
+
+                        <div class="history-date">
+                            ${date.toLocaleString()}
+                        </div>
+
+                    </div>
+                `;
+
+            });
+
+        })
+
+        .catch(function(error) {
+
+            console.log("History error:", error);
+
+            document.getElementById("journalHistory").innerHTML =
+                "Could not load journal history ❌";
+
+        });
+}
+loadJournalHistory();
+
+function loadMoodStats() {
+
+    fetch("http://localhost:5000/mood-stats?username=" + localStorage.getItem("moodscapeUser"))
+
+        .then(function(response) {
+            return response.json();
+        })
+
+        .then(function(stats) {
+
+            var moodBox = document.getElementById("moodStats");
+
+            moodBox.innerHTML = "";
+
+            var total = 0;
+
+            for (var mood in stats) {
+                total += stats[mood];
+            }
+
+            for (var mood in stats) {
+
+                var percentage = (stats[mood] / total) * 100;
+
+                var emoji = "";
+
+                if (mood == "Happy") emoji = "😊";
+                else if (mood == "Sad") emoji = "😢";
+                else if (mood == "Calm") emoji = "😌";
+                else if (mood == "Angry") emoji = "😡";
+                else if (mood == "Anxious") emoji = "😰";
+                else if (mood == "Loved") emoji = "🥰";
+                else if (mood == "Tired") emoji = "😴";
+                else if (mood == "Excited") emoji = "🤩";
+
+                moodBox.innerHTML += `
+                    <div class="stat-row">
+
+                        <div class="stat-info">
+                            <span>${emoji} ${mood}</span>
+                            <span>${stats[mood]}</span>
+                        </div>
+
+                        <div class="stat-bar">
+                            <div
+                                class="stat-fill"
+                                style="width: ${percentage}%">
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+
+            }
+
+        })
+
+        .catch(function(error) {
+
+            console.log(error);
+
+            document.getElementById("moodStats").innerHTML =
+                "Could not load mood statistics ❌";
+
+        });
+}
+
+loadMoodStats();
+
+function loadMoodCalendar() {
+
+    fetch("http://localhost:5000/journal?username=" + localStorage.getItem("moodscapeUser"))
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(entries) {
+
+            var calendar = document.getElementById("moodCalendar");
+
+            calendar.innerHTML = "";
+
+            var today = new Date();
+
+            var year = today.getFullYear();
+            var month = today.getMonth();
+
+            var firstDay = new Date(year, month, 1).getDay();
+            var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+            // Weekday headings
+            days.forEach(function(day) {
+
+                calendar.innerHTML +=
+                    '<div class="calendar-header">' +
+                    day +
+                    '</div>';
+
+            });
+
+            // Empty spaces
+            for (var i = 0; i < firstDay; i++) {
+
+                calendar.innerHTML += "<div></div>";
+
+            }
+
+            // Days
+            for (var day = 1; day <= daysInMonth; day++) {
+
+                var emoji = "";
+
+                for (var i = 0; i < entries.length; i++) {
+
+                    var date = new Date(entries[i].date);
+
+                    if (
+                        date.getDate() == day &&
+                        date.getMonth() == month &&
+                        date.getFullYear() == year
+                    ) {
+
+                        if (entries[i].mood == "Happy") {
+                            emoji = "😊";
+                        }
+                        else if (entries[i].mood == "Sad") {
+                            emoji = "😢";
+                        }
+                        else if (entries[i].mood == "Calm") {
+                            emoji = "😌";
+                        }
+                        else if (entries[i].mood == "Angry") {
+                            emoji = "😡";
+                        }
+                        else if (entries[i].mood == "Anxious") {
+                            emoji = "😰";
+                        }
+                        else if (entries[i].mood == "Loved") {
+                            emoji = "🥰";
+                        }
+                        else if (entries[i].mood == "Tired") {
+                            emoji = "😴";
+                        }
+                        else if (entries[i].mood == "Excited") {
+                            emoji = "🤩";
+                        }
+
+                    }
+
+                }
+
+                calendar.innerHTML +=
+                    '<div class="calendar-day">' +
+                        '<div>' + day + '</div>' +
+                        '<div class="calendar-mood">' + emoji + '</div>' +
+                    '</div>';
+
+            }
+
+        })
+        .catch(function(error) {
+
+            console.log("Calendar error:", error);
+
+            document.getElementById("moodCalendar").innerHTML =
+                "Could not load calendar ❌";
+
+        });
+}
+
+loadMoodCalendar();
+
+function loadMoodStreak() {
+
+    fetch("http://localhost:5000/journal?username=" + localStorage.getItem("moodscapeUser"))
+        .then(function(response) {
+            return response.json();
+        })
+
+        .then(function(entries) {
+
+            var streakBox = document.getElementById("moodStreak");
+
+            if (entries.length == 0) {
+                streakBox.innerHTML = "🔥 0 Day Streak";
+                return;
+            }
+
+            var dates = [];
+
+            entries.forEach(function(entry) {
+
+                var date = new Date(entry.date);
+
+                var dateString =
+                    date.getFullYear() + "-" +
+                    String(date.getMonth() + 1).padStart(2, "0") + "-" +
+                    String(date.getDate()).padStart(2, "0");
+
+                if (!dates.includes(dateString)) {
+                    dates.push(dateString);
+                }
+
+            });
+
+            dates.sort();
+
+            var streak = 1;
+
+            for (var i = dates.length - 1; i > 0; i--) {
+
+                var current = new Date(dates[i]);
+                var previous = new Date(dates[i - 1]);
+
+                var difference =
+                    (current - previous) / (1000 * 60 * 60 * 24);
+
+                if (difference == 1) {
+                    streak++;
+                }
+                else {
+                    break;
+                }
+
+            }
+
+            streakBox.innerHTML =
+                "🔥 " + streak + " Day Streak";
+
+        })
+
+        .catch(function(error) {
+
+            console.log("Streak error:", error);
+
+            document.getElementById("moodStreak").innerHTML =
+                "🔥 Streak unavailable";
+
+        });
+}
+
+loadMoodStreak();
+
+function startBreathing() {
+
+    var circle = document.getElementById("breathingCircle");
+    var text = document.getElementById("breathingText");
+
+    var steps = [
+        { text: "Breathe In 🌿", scale: "1.4", time: 4000 },
+        { text: "Hold ✨", scale: "1.4", time: 4000 },
+        { text: "Breathe Out 🌸", scale: "1", time: 4000 },
+        { text: "Hold ✨", scale: "1", time: 4000 }
+    ];
+
+    var index = 0;
+
+    function nextStep() {
+
+        var step = steps[index];
+
+        text.innerHTML = step.text;
+        circle.style.transform = "scale(" + step.scale + ")";
+
+        index++;
+
+        if (index >= steps.length) {
+            index = 0;
+        }
+
+        setTimeout(nextStep, step.time);
+    }
+
+    nextStep();
+}
+
+function analyzeMood() {
+
+    var journal = document.getElementById("journalText").value;
+    var result = document.getElementById("aiResult");
+
+    if (journal.trim() == "") {
+        result.innerHTML = "Please write something in your journal first ✍️";
+        return;
+    }
+
+    result.innerHTML = "🤖 AI is analyzing your journal...";
+
+    fetch("http://localhost:5000/analyze-mood", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            journal: journal
+        })
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        result.innerHTML = data.analysis;
+    })
+    .catch(function(error) {
+        console.log(error);
+        result.innerHTML = "AI analysis could not be completed ❌";
+    });
+}
+
+function signupUser() {
+
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    var status = document.getElementById("authStatus");
+
+    if (username.trim() == "" || password.trim() == "") {
+        status.innerHTML = "Please enter username and password.";
+        return;
+    }
+
+    fetch("http://localhost:5000/signup", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        status.innerHTML = data.message;
+    })
+    .catch(function(error) {
+        console.log(error);
+        status.innerHTML = "Signup failed ❌";
+    });
+}
+
+
+function loginUser() {
+
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    var status = document.getElementById("authStatus");
+
+    if (username.trim() == "" || password.trim() == "") {
+        status.innerHTML = "Please enter username and password.";
+        return;
+    }
+
+    fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        status.innerHTML = data.message;
+
+        if (data.username) {
+            localStorage.setItem("moodscapeUser", data.username);
+
+            document.getElementById("authStatus").innerHTML =
+    "👋 Welcome, " + data.username + "!";
+
+        }
+    })
+    .catch(function(error) {
+        console.log(error);
+        status.innerHTML = "Login failed ❌";
+    });
+}
+
+function toggleTheme() {
+
+    var body = document.body;
+    var button = document.getElementById("themeToggle");
+
+    body.classList.toggle("light-mode");
+
+    if (body.classList.contains("light-mode")) {
+        button.innerHTML = "🌙 Dark Mode";
+    }
+    else {
+        button.innerHTML = "☀️ Light Mode";
+    }
+}
+
+</script>
+
+                
+
+</body>
+</html>
